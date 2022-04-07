@@ -1,11 +1,10 @@
 // set up the board
 let gameState = {
-    // the player store is at 6, the opponent store at 13
+    // the Player 1 store is at 6, the Player 2 store at 13
     board: [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0],
-    turn: "player",
+    turn: "Player 1",
     winner: ""
 };
-// add in some constants as references to the playerstore and opponentstore
 
 console.log(gameState);
 
@@ -26,7 +25,7 @@ function basicMove(chosenPit) {
     // use the "turn" property of the gameState to set up which store needs to be skipped;
     let skip = 0;
 
-    if (gameState.turn === "player") {
+    if (gameState.turn === "Player 1") {
         skip = 13;
     } else {
         skip = 6;
@@ -36,7 +35,7 @@ function basicMove(chosenPit) {
     let hand = gameState.board[chosenPit];
     gameState.board[chosenPit] = 0;
 
-    // use a loop to decrement through the copied value 1 at a time, each time adding 1 to the next index in the array
+    // use a loop to go through the hand 1 at a time, each time adding 1 to the next index in the array
     let currentPit = 0;
 
     for (let i = 1; i <= hand; i++) {
@@ -64,7 +63,7 @@ function basicMove(chosenPit) {
 function specialRules(lastMove) {
 
     // check whether it is the current turn's store/bowl, and if so exit the function; no turn change
-    if (gameState.turn === "player") {
+    if (gameState.turn === "Player 1") {
         if (lastMove === 6) {
             return;
         }
@@ -77,7 +76,7 @@ function specialRules(lastMove) {
     function runSpecial(turn, move) {
         // add a reference to the index of the current player's store
         let store = 0;
-        if (turn === "player") {
+        if (turn === "Player 1") {
             store = 6;
         } else {
             store = 13;
@@ -96,26 +95,24 @@ function specialRules(lastMove) {
     }
 
     // check whether the turn is on their own side
-    if (gameState.turn === "player" && lastMove >= 0 && lastMove < 6 && gameState.board[lastMove] === 1) {
+    if (gameState.turn === "Player 1" && lastMove >= 0 && lastMove < 6 && gameState.board[lastMove] === 1) {
         // if yes, use the runSpecial function to steal the stones from the opposite side of the board
+        // also set 
         runSpecial(gameState.turn, lastMove);
-    } else if (gameState.turn === "opponent" && lastMove > 6 && lastMove < 13 && gameState.board[lastMove] === 1) {
+    } else if (gameState.turn === "Player 2" && lastMove > 6 && lastMove < 13 && gameState.board[lastMove] === 1) {
         runSpecial(gameState.turn, lastMove);
     }
     
 
     // set the next turn (if we met a rule that ends the game or repeats the turn, we don't get this far);
-    if (gameState.turn === "player") {
-        gameState.turn = "opponent";
+    if (gameState.turn === "Player 1") {
+        gameState.turn = "Player 2";
     } else {
-        gameState.turn = "player";
+        gameState.turn = "Player 1";
     }
 
     console.log(gameState);
-
-    // need to return something to tell showSpecial what to do
-
-
+    
 }
 
 // check if the game is over
@@ -150,9 +147,9 @@ function isGameOver() {
         
         // set the gameState to show the correct winner
         if (gameState.board[6] > gameState.board[13]) {
-            gameState.winner = "player";
+            gameState.winner = "Player 1";
         } else {
-            gameState.winner = "opponent";
+            gameState.winner = "Player 2";
         }
     }
 
@@ -179,7 +176,7 @@ function showMove(startPoint) {
 
 function showSpecial(endMove) {
     // updates the screen again after any special rules are met; also updates the turn display after all checks are completed
-    
+
     // find opposite spot on the board
     let opposite = 12 - endMove;
 
@@ -187,7 +184,7 @@ function showSpecial(endMove) {
     boardPits[endMove].innerText = gameState.board[endMove];
     boardPits[opposite].innerText = gameState.board[opposite];
     boardPits[6].innerText = gameState.board[6];
-    boardPits[6].innerText = gameState.board[13];
+    boardPits[13].innerText = gameState.board[13];
 
     // change the turn display to show the next turn
     currentTurn.innerText = gameState.turn;
@@ -201,15 +198,10 @@ function showWinner(gameIsOver) {
         return;
     }
 
+    // update a hidden div to be visible or create a new div to show the winner and directions/button for restarting the game
 
 
-
-
-
-    // update a hidden div to be visible or create a new div to show the winner and directions/button for restartin the game
 }
-
-
 
 // function for the click event; this will use the other functions to make the game move on after each click
 function makeMove(move) {
@@ -221,21 +213,32 @@ function makeMove(move) {
         return;
     }
 
-    // check the turn and make sure that the clicked pit belongs to the player
-    if (gameState.turn === "player" && clickedPit >= 0 && clickedPit < 6) {
+    // helper function to clean up the if/else statement below a bit
+    function moveAndDisplay() {
         let lastPit = basicMove(clickedPit);
         showMove(clickedPit);
         specialRules(lastPit);
         showSpecial(lastPit);
         showWinner(isGameOver());
-
-    } else if (gameState.turn === "opponent" && clickedPit >= 6 && clickedPit < 13){
-        let lastPit = basicMove(clickedPit);
-        showMove(clickedPit);
-        specialRules(lastPit);
-        showSpecial();
     }
 
+    // check the turn and make sure that the clicked pit belongs to the player
+    // run the state changes and visual changes separately
+    if (gameState.turn === "Player 1" && clickedPit >= 0 && clickedPit < 6) {
+        // let lastPit = basicMove(clickedPit);
+        // showMove(clickedPit);
+        // let specialMet = specialRules(lastPit);
+        // showSpecial(specialMet);
+        // showWinner(isGameOver());
+        moveAndDisplay();
+    } else if (gameState.turn === "Player 2" && clickedPit >= 6 && clickedPit < 13){
+        // let lastPit = basicMove(clickedPit);
+        // showMove(clickedPit);
+        // let specialMet = specialRules(lastPit);
+        // showSpecial(specialMet);
+        // showWinner(isGameOver());
+        moveAndDisplay();
+    }
 }
 
 board.addEventListener("click", makeMove);

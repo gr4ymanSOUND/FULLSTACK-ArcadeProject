@@ -17,12 +17,12 @@ header {
     align-items: stretch;
     background-color: rgb(189, 141, 93);
     height: 400px;
-    width: 800px;
+    max-width: 800px;
     border: 1px black solid;
 }
 
 #board .store {
-    width: 150px;
+    width: 18%;
     display: flex;
     flex-flow: column wrap;
     justify-content: center;
@@ -35,11 +35,11 @@ ul {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
-    width: 500px;
+    width: 64%;
 }
 
 ul > li {
-    flex-basis: 80px;
+    flex-basis: 16%;
     border: 1px green solid;
     display: flex;
     flex-flow: column wrap;
