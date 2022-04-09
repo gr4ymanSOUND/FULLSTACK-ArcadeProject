@@ -86,12 +86,13 @@ input {
     box-shadow: 1px 5px 12px black;
 }
 
-#board .store {
+.store {
     width: 18%;
     display: flex;
     flex-flow: column wrap;
     justify-content: center;
     align-items: center;
+    background-color: rgb(174, 122, 71);
     margin: 7px;
     border: 3px rgb(142, 102, 59) inset;
     border-radius: 10px; 
@@ -126,24 +127,42 @@ ul > li:hover {
 
 .game-bottom {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-bottom a {
+    padding: 5px;
+    margin: 1rem;
+    font-size: .75rem;
+    background-color: rgb(189, 141, 93);
+    border: 2px rgb(142, 102, 59) outset;
+    border-radius: 5px;
+    padding: 5px;
+    box-shadow: 1px 2px 5px black;
+    color: black;
+    text-decoration: none;
+}
+
+.game-bottom a:hover {
+    color: rgb(247, 206, 0);
 }
 
 .outline-red {
-    height: 95%;
-    align-self: center;
-    border-left: 3px red dotted;
+    border-left: 3px red dashed;
 }
 
 .outline-blue {
-    height: 95%;
-    align-self: center;
-    border-right: 3px blue dotted;
+    border-right: 3px blue dashed;
 }
 
 #winner {
-    width: 350px;
-    height: 200px;
+    width: 400px;
+    height: 250px;
     text-align: center;
+    padding: 10px;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -151,12 +170,15 @@ ul > li:hover {
     display: flex;
     flex-flow: column;
     justify-content: space-around;
-    background: white;
-    border: 2px black solid;
+    background-color: rgb(189, 141, 93);
+    border: 4px rgb(142, 102, 59) outset;
+    border-radius: 10px;
+    box-shadow: 1px 5px 12px black;
 }
 
-#winner h1 {
-    font-size: 2rem;
+#winname {
+    font-family: 'Berkshire Swash', cursive;
+    font-size: 3rem;
 }
 
 button {

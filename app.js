@@ -2,7 +2,9 @@
 
 const playerNames = {
     PLAYER1: "Player 1",
-    PLAYER2: "Player 2"
+    PLAYER2: "Player 2",
+    p1color: "blue",
+    p2color: "red"
 }
 
 let gameState = {
@@ -52,7 +54,7 @@ function basicMove(chosenPit) {
         currentPit = chosenPit + i;
         //first check if currentPit is greater than 13; if it is, use modulo to wrap around the array
         if (currentPit > 13) {
-            currentPit = currentPit % 13;
+            currentPit = (currentPit % 13) - 1;
         }
         //if the currentPit is equal to the index that should be skipped, add 1 to the hand to allow you to skip past that spot and increase the loop length so you can continue to drop stones
         if (currentPit === skip) {
@@ -202,10 +204,10 @@ function showSpecial(endMove) {
     
     // change the turn display to show the next turn
     currentTurn.innerText = gameState.turn;
-    if (currentTurn.style.getPropertyValue("color") === "blue") {
-        currentTurn.style.setProperty("color","red");
+    if (gameState.turn === playerNames.PLAYER2) {
+        currentTurn.style.setProperty("color",playerNames.p2color);
     } else {
-        currentTurn.style.setProperty("color","blue");
+        currentTurn.style.setProperty("color",playerNames.p1color);
     }
     
 }
@@ -224,7 +226,17 @@ function showWinner(gameIsOver) {
     // create a new div to show the winner and directions/button for restarting the game
     let winnerBox = document.createElement("div");
     winnerBox.id = "winner";
-    winnerBox.innerHTML = `<h1 id="winname">The winner is ${gameState.winner}!</h1><p>Please click the "Restart" button below to play again.`;
+    let color = "";
+
+    // find the color to use for the winner's name (based on the player color)
+    if (gameState.winner === playerNames.PLAYER1) {
+        color = playerNames.p1color;
+    } else {
+        color = playerNames.p2color;
+    }
+
+
+    winnerBox.innerHTML = `<p>The winner is...</p><h1 id="winname" style="color: ${color}">${gameState.winner}!</h1><p>Please click the "Restart" button below to play again.</p>`;
     // add the new div to the page
     let gameBoard = document.getElementById("game");
     gameBoard.appendChild(winnerBox);
@@ -314,7 +326,7 @@ function restartGame() {
 
     // update the current turn display
     currentTurn.innerText = playerNames.PLAYER1;
-    currentTurn.style.setProperty("color","blue");
+    currentTurn.style.setProperty("color",playerNames.p1color);
 
     // update the board (can use the showMove function since it updates all pits on the board - pass in 0 to start at the beginning of the board
     showMove(0);
