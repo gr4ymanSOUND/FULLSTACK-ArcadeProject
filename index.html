@@ -5,17 +5,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Babylonica&family=Berkshire+Swash&family=Itim&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <h1>Mancala</h1>
     </header>
-    <main>
-        <h2>Current turn: <span id="turn">Player 1</span></h2>
+    <main id="game">
+        <h1 class="current-turn">Current turn: 
+            <span id="turn" style="color: blue">Player 1</span>
+        </h1>
+        <div class="player-names">
+            <!-- will enter html for entering player names -->
+            <input type="text" id="player2" value="Player 2">
+            <button type="button" id="name-update">Update Names</button>
+            <input type="text" id="player1" value="Player 1">
+        </div>
         <div id="board">
-            <div id="13" class="store pit outline-red"><span>Player 2 Store: </span>0</div>
+            <div class="outline-red"></div>
+            <div id="13" class="store pit">0</div>
             <uL>
                 <li id="12" class="pit">4</li>
                 <li id="11" class="pit">4</li>
@@ -30,8 +41,14 @@
                 <li id="4" class="pit">4</li>
                 <li id="5" class="pit">4</li>
             </uL>
-            <div id="6" class="store pit outline"><span>Player 1 Store: </span>0</div>
+            <div id="6" class="store pit"><span></span>0</div>
+            <div class="outline-blue"></div>
         </div>
+        
+        <div class="game-bottom">
+            <button id ="restart-game" type="button">Restart the Game</button>
+        </div>
+        
     </main>
     <script src="app.js"></script>
 </body>
