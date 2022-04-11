@@ -14,8 +14,6 @@ let gameState = {
     winner: ""
 };
 
-console.log(gameState);
-
 // retrieve the elements needed from the html
 let board = document.getElementById("board");
 let boardPits = [];
@@ -31,7 +29,27 @@ for (let i = 0; i < 14; i++) {
     boardPits.push(pit);
 }
 
-// function to do the basic move - empty the chosen spot and add 1 to each spot after it in the array until there are none left; pass in the chosen pit/index
+// function to create the stones in each pit at the start of the game
+function fillStones(pit, index) {
+    // find the number of stones that should be in that pit
+    let numStones = gameState.board[index];
+
+    // once for every number up to the value of the stones in the current pit, create a stone div and add it to the pit div as a child
+    for (let i = 0; i < numStones; i++) {
+        let stone = document.createElement("div");
+        stone.className = "stone";
+        pit.appendChild(stone);
+    }
+    
+}
+
+// use foreach to actually fill stones in each pit to start the game
+boardPits.forEach(fillStones);
+
+//
+// function to do the basic move
+//
+
 function basicMove(chosenPit) {
 
     // use the "turn" property of the gameState to set up which store needs to be skipped;
@@ -64,7 +82,6 @@ function basicMove(chosenPit) {
         }
         
     }
-    console.log(gameState);
 
     // return the index of the last space updated
     return currentPit;
@@ -102,7 +119,6 @@ function specialRules(lastMove) {
         hand += gameState.board[opposite];
         gameState.board[opposite] = 0;
         gameState.board[store] += hand;
-        
     }
 
     // check whether the turn is on their own side
@@ -121,8 +137,6 @@ function specialRules(lastMove) {
     } else {
         gameState.turn = playerNames.PLAYER1;
     }
-
-    console.log(gameState);
     
 }
 
@@ -171,35 +185,43 @@ function isGameOver() {
 
 }
 
+//
 // functions to render the changes
+//
 
-function showMove(startPoint) {
+// helper function specifically for showing the stones in each pit individually
+function showStones(pitIndex) {
+    boardPits[pitIndex].innerHTML = "";
+    let pitValue = gameState.board[pitIndex];
+    for (let i = 0; i < pitValue; i++) {
+        let stone = document.createElement("div");
+        stone.className = "stone";
+        boardPits[pitIndex].appendChild(stone);
+    }
+}
 
-    // use for loop to go through each of the boardPits in order starting at the passed in "startPoint" (the clicked pit) and update the amount shown on screen
+// show the correct stones after the basic move is done
+function showMove() {
 
-    // go as long as i isn't the same as the start index, and use modulo to increment i while keeping it less than the length of the board array
-    // change the startpoint before entering the loop (tried a few things, couldn't get it to work otherwise)
-
-    boardPits[startPoint].innerText = gameState.board[startPoint];
-    for (let i = startPoint + 1; i !== startPoint; i = (i + 1) % 14) {
-        boardPits[i].innerText = gameState.board[i];
+    // use for loop to go through each of the boardPits to update the stones in each using the showStones function
+    for (let i = 0; i < boardPits.length; i++) {
+        showStones(i);
     }
 
 }
 
+// updates the screen again after any special rules are met; also updates the turn display after all checks are completed
 function showSpecial(endMove) {
-    // updates the screen again after any special rules are met; also updates the turn display after all checks are completed
-
+   
     if (endMove !== 6 && endMove !== 13) {
         // find opposite spot on the board
         let opposite = 12 - endMove;
 
-        // update the innerText of the elements to show the new values; update the last move the player made, the opposite spot on the board, and both of the pits(just to make sure it accounts for either player without writing a bunch of checks)
-        boardPits[endMove].innerText = gameState.board[endMove];
-        boardPits[opposite].innerText = gameState.board[opposite];
-        boardPits[6].innerText = gameState.board[6];
-        boardPits[13].innerText = gameState.board[13];
-
+        // update the elements to show the new values; update the last move the player made, the opposite spot on the board, and both of the pits(just to make sure it accounts for either player without writing a bunch of checks)
+        showStones(endMove);
+        showStones(opposite);
+        showStones(6);
+        showStones(13);
     }
     
     // change the turn display to show the next turn
@@ -212,16 +234,16 @@ function showSpecial(endMove) {
     
 }
 
+// updates the screen to show the game winner
 function showWinner(gameIsOver) {
-    // updates the screen to show the game winner
 
     // first, exit the function if the game isn't over
     if (!gameIsOver) {
         return;
     }
 
-    // run showMove again to update the board to show the correct stones in each pit and store (use 0 as argument)
-    showMove(0);
+    // run showMove again to update the board to show the correct stones in each pit and store
+    showMove();
 
     // create a new div to show the winner and directions/button for restarting the game
     let winnerBox = document.createElement("div");
@@ -243,25 +265,28 @@ function showWinner(gameIsOver) {
 
 }
 
+//
 // function for the gameplay click event; this will use the other functions to make the game move on after each click
+//
+
 function makeMove(move) {
     // get the id of the pit that was clicked on
     let clickedPit = Number(move.target.id);
-
+    
     // prevent any clicks after a winner is set from doing anything
     if (gameState.winner) {
         return;
     }
 
-    // prevent any clicks until the players have entered their names
-    if (!gameState.turn)  {
+    // if the value of that pit is 0, prevent the click from doing anything
+    if (gameState.board[clickedPit] === 0){
         return;
     }
 
     // helper function to clean up the if/else statement below a bit
     function moveAndDisplay() {
         let lastPit = basicMove(clickedPit);
-        showMove(clickedPit);
+        showMove();
         specialRules(lastPit);
         showSpecial(lastPit);
         showWinner(isGameOver());
@@ -279,8 +304,10 @@ function makeMove(move) {
 // event listener for making moves during the game
 board.addEventListener("click", makeMove);
 
-
+//
 // function for updating player names
+//
+
 function updateNames() {
 
     // check the current turn before updating the gameState, so that the display of the current turn can be updated properly (if we updated the gamestate first, we can't tell how to update the displayed turn and the gamestate for the turn
@@ -295,15 +322,15 @@ function updateNames() {
         gameState.turn = playerNames.PLAYER2;
         currentTurn.innerText = playerNames.PLAYER2;
     }
-    console.log(gameState);
-    console.log(playerNames);
-    console.log(gameState.turn);
 }
 
 // event listener for updating the playerNames
 nameButton.addEventListener("click", updateNames);
 
+//
 // function to reset the gameState and display for restarting the game
+//
+
 function restartGame() {
 
     // check if there is a winner, and if there is, remove the displayed winner box
@@ -322,22 +349,17 @@ function restartGame() {
     gameState.board = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
     gameState.turn = playerNames.PLAYER1;
     gameState.winner = "";
-    console.log(gameState);
 
     // update the current turn display
     currentTurn.innerText = playerNames.PLAYER1;
     currentTurn.style.setProperty("color",playerNames.p1color);
 
     // update the board (can use the showMove function since it updates all pits on the board - pass in 0 to start at the beginning of the board
-    showMove(0);
+    showMove();
 }
 
 // event listener for the button to restart the game
 restartButton.addEventListener("click", restartGame);
 
-
-
-
-// add setTimeout() to the display functions to give a bit of delay while moving between pits
-    // this may turn out not to work - do more research
-
+// currently having an issue where clicks sometimes aren't registered correctly
+// also sometimes it seems to register the click, but only changes the turn - this may be related to just not registering correctly and thinking I clicked on an empty pit for the move or something
